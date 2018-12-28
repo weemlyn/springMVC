@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <title>基于ssm的restful风格编程</title>
+</head>
+<body>
+<h1 style="text-align: center">基于ssm的restful风格编程</h1>
+
+    <title>驾驶机动车在道路上违反道路交通安全法的行为，属于什么行为？</title>
+    <titleImg></titleImg>
+    <choiceList>
+        <entry>
+            <string>A</string>
+            <string>违章行为</string>
+        </entry>
+        <entry>
+            <string>B</string>
+            <string>违法行为</string>
+        </entry>
+        <entry>
+            <string>C</string>
+            <string>过失行为</string>
+        </entry>
+        <entry>
+            <string>D</string>
+            <string>违规行为</string>
+        </entry>
+    </choiceList>
+    <choiceImgList/>
+
+
+  <div class="container">
+      <div class="form-control">
+          <div class="form-group">
+              <label for="name">车名</label>
+              <input id="name" type="text" placeholder="车名模糊查询" class="form-control"/>
+          </div>
+
+          <div class="form-group">
+              <label for="beginDate">销售时间</label>
+              <input id="beginDate" type="date" placeholder="开始时间" class="form-control"/>
+              <input id="endDate" type="date" placeholder="结束时间" class="form-control"/>
+          </div>
+
+          <div class="form-group">
+              <button class="btn btn-outline-primary"onclick="loadQuery()">查询</button>
+              <button class="btn btn-outline-primary" onclick="upd(0)" >新增</button>
+          </div>
+
+
+
+      </div>
+      <table class="table table-striped table-hover">
+          <thead>
+          <tr>
+              <td>编号</td>
+              <td>车名</td>
+              <td>价格</td>
+              <td>销售日期</td>
+              <td>操作</td>
+
+          </tr>
+          </thead>
+          <tbody id="tbody">
+
+          </tbody>
+      </table>
+
+  </div>
+</body>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script >
+    $(function () {
+        loadQuery();
+    })
+function upd(id) {
+    localStorage.setItem("id",id);
+    location.href="edit.html";
+}
+
+    function del(id) {
+        $.ajax({
+            type:'delete',
+            url:"http://localhost:8081/spring0929/api/car/"+id,
+            dataType:"json",
+            success:function (data) {
+                if (data==1){
+                    $("#"+id).remove();
+                }
+            }
+
+        })
+
+    }
+
+    function loadQuery() {
+
+        $.ajax({
+           url:"http://localhost:8081/spring0929/api/car",
+            type:"get",
+            dataType:"json",
+            data:{"name":$("#name").val(),
+                  "beginDate":$("#beginDate").val(),
+                  "endDate":$("#endDate").val()
+            },
+            success:function (data) {
+               console.log(data);
+                if(!data){
+                   $("#tbody").html("<tr><td colspan='5'>无数据</td></tr>")
+                }
+                else {
+                   var appendVal="";
+                   $.each(data,function (index,car) {
+                       appendVal+=`
+                         <tr id="${car.id}">
+              <td>${car.id}</td>
+              <td>${car.name}</td>
+              <td>${car.price}</td>
+              <td>${car.salDate}</td>
+
+              <td>
+              <button class="btn btn-group-sm" onclick=del(${car.id})>删除</button>
+              <button class="btn btn-group-sm" onclick="upd(${car.id})">修改</button>
+</td>
+
+          </tr>
+                       `;
+                   });
+                  $("#tbody").html(appendVal);
+
+                }
+
+            }
+
+        });
+    }
+</script>
+</html>
