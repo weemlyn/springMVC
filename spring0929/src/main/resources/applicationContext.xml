@@ -10,7 +10,7 @@
 
     <util:properties id="properties" location="classpath:jdbc.properties"/>
 
-    <bean id="dataSource" class="com.mchange.v2.c3p0. ">
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="#{properties[driver]}"/>
         <property name="jdbcUrl" value="#{properties[url]}"/>
         <property name="user" value="#{properties[username]}"/>
